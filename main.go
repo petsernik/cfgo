@@ -148,12 +148,15 @@ func (io *IO) writeValue(v any) {
 	}
 }
 
-const TESTS = false
+func precalc() {
+
+}
+
+const TESTS = true
 const DEBUG = false
 
 func solution(io *IO) {
-	arr := [2][3]int{{1, 2, 3}, {4, 5, 6}}
-	io.Println(arr)
+
 }
 
 const DEBUG_WARNING = "YOU ARE IN DEBUG MOD"
@@ -165,6 +168,8 @@ func main() {
 	if DEBUG {
 		fmt.Fprintln(os.Stderr, "WARNING:", DEBUG_WARNING)
 	}
+
+	precalc()
 
 	t := 1
 	if TESTS {
