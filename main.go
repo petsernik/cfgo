@@ -148,26 +148,29 @@ func (io *IO) writeValue(v any) {
 	}
 }
 
-func precalc() {
-
+func debugPrintln(a ...any) {
+	if DEBUG {
+		fmt.Println(a...)
+	}
 }
 
 const TESTS = true
 const DEBUG = false
 
-func solution(io *IO) {
+func precalc() {}
 
+func solution(io *IO) {
+	var n int64
+	io.Read(&n)
 }
 
-const DEBUG_WARNING = "YOU ARE IN DEBUG MOD"
+const DEBUG_WARNING = "WARNING: YOU ARE IN DEBUG MOD"
 
 func main() {
 	io := NewIO()
 	defer io.Flush()
 
-	if DEBUG {
-		fmt.Fprintln(os.Stderr, "WARNING:", DEBUG_WARNING)
-	}
+	debugPrintln(DEBUG_WARNING)
 
 	precalc()
 
@@ -179,8 +182,9 @@ func main() {
 		solution(io)
 	}
 
+	debugPrintln(DEBUG_WARNING)
+
 	if DEBUG {
-		fmt.Fprintln(os.Stderr, "WARNING:", DEBUG_WARNING)
 		os.Exit(228)
 	}
 }
