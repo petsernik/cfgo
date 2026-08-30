@@ -6,6 +6,8 @@ import (
 	"time"
 )
 
+// structs
+
 type Treap[T cmp.Ordered] struct {
 	root *node[T]
 	rng  *rand.Rand
@@ -19,6 +21,8 @@ type node[T cmp.Ordered] struct {
 	left  *node[T]
 	right *node[T]
 }
+
+// internal functions
 
 func newNode[T cmp.Ordered](key T, rng *rand.Rand) *node[T] {
 	return &node[T]{
@@ -46,10 +50,18 @@ func size[T cmp.Ordered](n *node[T]) int {
 	return n.size
 }
 
+func sum[T cmp.Ordered](n *node[T]) T {
+	if n == nil {
+		var zero T
+		return zero
+	}
+	return n.sum
+}
+
 func update[T cmp.Ordered](n *node[T]) {
 	if n != nil {
 		n.size = 1 + size(n.left) + size(n.right)
-		// n.sum = n.key + ...
+		//n.sum = n.key + sum(n.left) + sum(n.right)
 	}
 }
 
@@ -105,16 +117,6 @@ func merge[T cmp.Ordered](a, b *node[T]) *node[T] {
 	}
 }
 
-func (t *Treap[T]) Insert(x T) {
-	n := newNode(x, t.rng)
-	l, r := split(t.root, x)
-	t.root = merge(merge(l, n), r)
-}
-
-func (t *Treap[T]) Erase(x T) {
-	t.root = erase(t.root, x)
-}
-
 func erase[T cmp.Ordered](n *node[T], x T) *node[T] {
 	if n == nil {
 		return nil
@@ -128,6 +130,18 @@ func erase[T cmp.Ordered](n *node[T], x T) *node[T] {
 	}
 	update(n)
 	return n
+}
+
+// public methods
+
+func (t *Treap[T]) Insert(x T) {
+	n := newNode(x, t.rng)
+	l, r := split(t.root, x)
+	t.root = merge(merge(l, n), r)
+}
+
+func (t *Treap[T]) Erase(x T) {
+	t.root = erase(t.root, x)
 }
 
 func (t *Treap[T]) Find(x T) *T {
@@ -204,10 +218,10 @@ func (t *Treap[T]) Max() *T {
 	return &cur.key
 }
 
-func countLess[T cmp.Ordered](n *node[T], x T) int {
+func (t *Treap[T]) CountLess(x T) int {
 	res := 0
 
-	for n != nil {
+	for n := t.root; n != nil; {
 		if n.key < x {
 			res += 1 + size(n.left)
 			n = n.right
@@ -219,10 +233,10 @@ func countLess[T cmp.Ordered](n *node[T], x T) int {
 	return res
 }
 
-func countLessEqual[T cmp.Ordered](n *node[T], x T) int {
+func (t *Treap[T]) CountLessEqual(x T) int {
 	res := 0
 
-	for n != nil {
+	for n := t.root; n != nil; {
 		if n.key <= x {
 			res += 1 + size(n.left)
 			n = n.right
@@ -234,10 +248,10 @@ func countLessEqual[T cmp.Ordered](n *node[T], x T) int {
 	return res
 }
 
-func countGreater[T cmp.Ordered](n *node[T], x T) int {
+func (t *Treap[T]) CountGreater(x T) int {
 	res := 0
 
-	for n != nil {
+	for n := t.root; n != nil; {
 		if n.key > x {
 			res += 1 + size(n.right)
 			n = n.left
@@ -249,10 +263,10 @@ func countGreater[T cmp.Ordered](n *node[T], x T) int {
 	return res
 }
 
-func countGreaterEqual[T cmp.Ordered](n *node[T], x T) int {
+func (t *Treap[T]) CountGreaterEqual(x T) int {
 	res := 0
 
-	for n != nil {
+	for n := t.root; n != nil; {
 		if n.key >= x {
 			res += 1 + size(n.right)
 			n = n.left
@@ -264,22 +278,6 @@ func countGreaterEqual[T cmp.Ordered](n *node[T], x T) int {
 	return res
 }
 
-func (t *Treap[T]) CountLess(x T) int {
-	return countLess(t.root, x)
-}
-
-func (t *Treap[T]) CountLessEqual(x T) int {
-	return countLessEqual(t.root, x)
-}
-
-func (t *Treap[T]) CountGreater(x T) int {
-	return countGreater(t.root, x)
-}
-
-func (t *Treap[T]) CountGreaterEqual(x T) int {
-	return countGreaterEqual(t.root, x)
-}
-
 func (t *Treap[T]) Count(x T) int {
-	return countLessEqual(t.root, x) - countLess(t.root, x)
+	return t.CountLessEqual(x) - t.CountLess(x)
 }
