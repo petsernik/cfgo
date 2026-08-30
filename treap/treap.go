@@ -203,3 +203,83 @@ func (t *Treap[T]) Max() *T {
 	}
 	return &cur.key
 }
+
+func countLess[T cmp.Ordered](n *node[T], x T) int {
+	res := 0
+
+	for n != nil {
+		if n.key < x {
+			res += 1 + size(n.left)
+			n = n.right
+		} else {
+			n = n.left
+		}
+	}
+
+	return res
+}
+
+func countLessEqual[T cmp.Ordered](n *node[T], x T) int {
+	res := 0
+
+	for n != nil {
+		if n.key <= x {
+			res += 1 + size(n.left)
+			n = n.right
+		} else {
+			n = n.left
+		}
+	}
+
+	return res
+}
+
+func countGreater[T cmp.Ordered](n *node[T], x T) int {
+	res := 0
+
+	for n != nil {
+		if n.key > x {
+			res += 1 + size(n.right)
+			n = n.left
+		} else {
+			n = n.right
+		}
+	}
+
+	return res
+}
+
+func countGreaterEqual[T cmp.Ordered](n *node[T], x T) int {
+	res := 0
+
+	for n != nil {
+		if n.key >= x {
+			res += 1 + size(n.right)
+			n = n.left
+		} else {
+			n = n.right
+		}
+	}
+
+	return res
+}
+
+func (t *Treap[T]) CountLess(x T) int {
+	return countLess(t.root, x)
+}
+
+func (t *Treap[T]) CountLessEqual(x T) int {
+	return countLessEqual(t.root, x)
+}
+
+func (t *Treap[T]) CountGreater(x T) int {
+	return countGreater(t.root, x)
+}
+
+func (t *Treap[T]) CountGreaterEqual(x T) int {
+	return countGreaterEqual(t.root, x)
+}
+
+func (t *Treap[T]) Count(x T) int {
+	return countLessEqual(t.root, x) - countLess(t.root, x)
+}
